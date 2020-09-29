@@ -48,23 +48,23 @@
 
     # tests for #178, taken from LsqFit.jl, but stripped
     let
-        srand(12345)
+        Random.seed!(12345)
 
         # TODO: Change to `.-x` when 0.5 support is dropped
         model(x, p) = p[1] .* exp.(-x .* p[2])
 
-        xdata = linspace(0,10,20)
+        xdata = 0.0:10.0:20.0
         ydata = model(xdata, [1.0 2.0]) + 0.01*randn(length(xdata))
 
         f_lsq = p ->  model(xdata, p) - ydata
         g_lsq = Calculus.jacobian(f_lsq)
         results = LsqFit.levenberg_marquardt(f_lsq, g_lsq, [0.5, 0.5])
 
-        @assert norm(OptimBase.minimizer(results) - [1.0, 2.0]) < 0.05
+        @test norm(OptimBase.minimizer(results) - [1.0, 2.0]) < 0.05
     end
 
     let
-        srand(12345)
+        Random.seed!(12345)
 
         # TODO: Change to `.-x` when 0.5 support is dropped
         model(x, p) = p[1] .* exp.(-x ./ p[2]) .+ p[3]
